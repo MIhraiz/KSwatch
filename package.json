@@ -1,22 +1,22 @@
 {
-  "name": "colorpickerkmp",
-  "version": "1.0.2",
-  "description": "🎨 Color Picker for kotlin multiplatform inspired from [compose-color-picker](https://github.com/mhssn95/compose-color-picker) by [mhssn95](https://github.com/mhssn95)",
+  "name": "kswatch",
+  "version": "1.0.0",
+  "description": "Compose Multiplatform color picker.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MohammedAlaaMorsi/Color-Picker-KMP.git"
+    "url": "git+https://github.com/MIhraiz/KSwatch.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "MIhraiz",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/MohammedAlaaMorsi/Color-Picker-KMP/issues"
+    "url": "https://github.com/MIhraiz/KSwatch/issues"
   },
-  "homepage": "https://github.com/MohammedAlaaMorsi/Color-Picker-KMP#readme",
+  "homepage": "https://github.com/MIhraiz/KSwatch#readme",
   "devDependencies": {
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1"
