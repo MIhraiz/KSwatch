@@ -1,4 +1,4 @@
-rootProject.name = "ColorPickerKMP"
+rootProject.name = "KSwatch"
 
 pluginManagement {
     repositories {
@@ -15,6 +15,10 @@ pluginManagement {
     }
 }
 
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
+}
+
 dependencyResolutionManagement {
     repositories {
         google {
@@ -29,4 +33,5 @@ dependencyResolutionManagement {
     }
 }
 include(":sample:composeApp")
-include(":colorpicker")
+include(":sample:androidApp")
+include(":kswatch")

@@ -1,6 +1,6 @@
-# ColorPicker Kotlin Multiplatform
+# KSwatch
 
-🎨 Color Picker for Kotlin multiplatform inspired from [compose-color-picker](https://github.com/mhssn95/compose-color-picker) by [mhssn95](https://github.com/mhssn95)
+🎨 Color picker for Compose Multiplatform. Started as a fork of [Color-Picker-KMP](https://github.com/MohammedAlaaMorsi/Color-Picker-KMP), which was inspired by [compose-color-picker](https://github.com/mhssn95/compose-color-picker).
 
 ![colorPickers](/assets/colorPickers.png)
 
@@ -8,7 +8,7 @@
 # Download
 
 ```groovy
-implementation 'io.github.mohammedalaamorsi:colorpicker:1.0.2'
+implementation 'io.github.mihraiz:kswatch:1.0.0'
 ```
 # Usage
 

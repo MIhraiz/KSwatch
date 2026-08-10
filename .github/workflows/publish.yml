@@ -35,10 +35,7 @@ jobs:
           node --version
                 npm --version
                 echo "Node.js modules directory:"
-                ls -la ./colorpicker/build/js/node_modules || true
-
-      - name: Install CocoaPods
-        run: gem install cocoapods
+                ls -la ./kswatch/build/js/node_modules || true
 
       - name: Grant Permission to Execute Gradle
         run: chmod +x gradlew
@@ -46,10 +43,10 @@ jobs:
       - name: Build Android
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: assembleRelease
+          arguments: assemble
 
       - name: Build iOS
-        run: ./gradlew iosX64MainKlibrary iosArm64MainKlibrary iosSimulatorArm64MainKlibrary
+        run: ./gradlew iosArm64MainKlibrary iosSimulatorArm64MainKlibrary
 
       - name: Build macOS
         run: ./gradlew macosArm64MainKlibrary
@@ -57,20 +54,20 @@ jobs:
       - name: Build JavaScript
         run: |
           echo "Building JavaScript..."
-          ./gradlew colorpicker:jsPackageJson
-          ./gradlew colorpicker:kotlinNodeJsSetup
-          ./gradlew colorpicker:jsNodeProductionRun --stacktrace
+          ./gradlew kswatch:jsPackageJson
+          ./gradlew kswatch:kotlinNodeJsSetup
+          ./gradlew kswatch:jsNodeProductionRun --stacktrace
           echo "Verifying build output..."
-          ls -la ./colorpicker/build/compileSync/js/main/productionExecutable/colorpicker.js || true
+          ls -la ./kswatch/build/compileSync/js/main/productionExecutable/kswatch.js || true
 
       - name: Build JVM
         run: ./gradlew jvmJar
 
       - name: Publish Library
         run: |
-          echo "Publishing and Releasing library 🚀"
+          echo "Publishing and Releasing library"
           ./gradlew publish --no-configuration-cache
-          echo "Published and Released ✅"
+          echo "Published and Released"
         env:
           ORG_GRADLE_PROJECT_VERSION_NAME: ${{ github.event.inputs.versionName }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEY }}
@@ -80,7 +77,7 @@ jobs:
 
       - name: Create and push tag
         run: |
-          git config --global user.email "zicoreal@ymail.com"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "$GITHUB_ACTOR"
           git tag -a $TAG -m "Release v$TAG"
           git push origin $TAG
@@ -104,8 +101,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./colorpicker/build/outputs/aar/colorpicker-release.aar
-          asset_name: colorpicker-${{ github.event.inputs.versionName }}.aar
+          asset_path: ./kswatch/build/outputs/aar/kswatch-release.aar
+          asset_name: kswatch-${{ github.event.inputs.versionName }}.aar
           asset_content_type: application/zip
 
       - name: Upload JavaScript Release
@@ -114,6 +111,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./colorpicker/build/compileSync/js/main/productionExecutable/kotlin/ColorPickerKMP-colorpicker.js
-          asset_name: colorpicker-${{ github.event.inputs.versionName }}.js
+          asset_path: ./kswatch/build/compileSync/js/main/productionExecutable/kotlin/KSwatch-kswatch.js
+          asset_name: kswatch-${{ github.event.inputs.versionName }}.js
           asset_content_type: application/javascript
