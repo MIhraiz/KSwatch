@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import io.github.mihraiz.kswatch.data.ColorRange
 import io.github.mihraiz.kswatch.data.Colors.gradientColors
 import io.github.mihraiz.kswatch.ext.blue
-import io.github.mihraiz.kswatch.ext.colorToHSV
+import io.github.mihraiz.kswatch.ext.toHsv
 import io.github.mihraiz.kswatch.ext.darken
 import io.github.mihraiz.kswatch.ext.drawColorSelector
 import io.github.mihraiz.kswatch.ext.green
@@ -37,8 +37,6 @@ import io.github.mihraiz.kswatch.ext.lighten
 import io.github.mihraiz.kswatch.ext.red
 import io.github.mihraiz.kswatch.helper.BoundedPointStrategy
 import io.github.mihraiz.kswatch.helper.ColorPickerHelper
-import io.github.mihraiz.kswatch.helper.ColorPickerHelper.darkness
-import io.github.mihraiz.kswatch.helper.ColorPickerHelper.lightness
 import io.github.mihraiz.kswatch.helper.MathHelper
 import io.github.mihraiz.kswatch.helper.MathHelper.getBoundedPointWithInRadius
 import io.github.mihraiz.kswatch.helper.MathHelper.getLength
@@ -95,10 +93,10 @@ internal fun RingColorPicker(
         mutableStateOf(initialColor)
     }
     var lightness by remember {
-        mutableStateOf(initialColor.lightness())
+        mutableStateOf(0f)
     }
     var darkness by remember {
-        mutableStateOf(initialColor.darkness())
+        mutableStateOf(0f)
     }
     var alpha by remember {
         mutableStateOf(initialColor.alpha)
@@ -106,9 +104,9 @@ internal fun RingColorPicker(
 
     LaunchedEffect(initialColor, radius) {
         if (radius > 0) {
-            val hsv=colorToHSV(initialColor)
-            val angle = MathHelper.toRadians(hsv[0].toDouble())
-            val saturation = hsv[1]
+            val hsv = initialColor.toHsv()
+            val angle = MathHelper.toRadians(hsv.hue.toDouble())
+            val saturation = hsv.saturation
 
             val x = radius + cos(angle) * saturation * radius
             val y = radius + sin(angle) * saturation * radius

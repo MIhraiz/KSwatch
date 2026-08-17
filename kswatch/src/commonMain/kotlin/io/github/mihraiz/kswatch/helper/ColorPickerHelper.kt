@@ -4,8 +4,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
 import io.github.mihraiz.kswatch.data.ColorRange
-import kotlin.math.pow
-import kotlin.math.sqrt
+import io.github.mihraiz.kswatch.ext.blue
+import io.github.mihraiz.kswatch.ext.toHsv
+import io.github.mihraiz.kswatch.ext.darken
+import io.github.mihraiz.kswatch.ext.green
+import io.github.mihraiz.kswatch.ext.lighten
+import io.github.mihraiz.kswatch.ext.red
+import kotlin.math.roundToInt
 
 
 internal object ColorPickerHelper {
@@ -44,66 +49,54 @@ internal object ColorPickerHelper {
         } to range
     }
 
-    fun calculateInitialPickerLocation(
-        initialColor: Color,
-        colorPickerSize: IntSize,
-        rangeColor: Color
-    ): Offset {
-        val xProgress = calculateLightness(initialColor, rangeColor)
-        val yProgress = calculateDarkness(initialColor)
+    /**
+     * Maps a hue progress in 0..1 to the channels of the pure hue color.
+     */
+    fun hueToRgb(progress: Double): Triple<Int, Int, Int> {
+        val (rangeProgress, range) = calculateRangeProgress(progress.coerceIn(0.0, 1.0))
+        return when (range) {
+            ColorRange.RedToYellow -> Triple(255, (255 * rangeProgress).roundToInt(), 0)
+            ColorRange.YellowToGreen -> Triple((255 * (1 - rangeProgress)).roundToInt(), 255, 0)
+            ColorRange.GreenToCyan -> Triple(0, 255, (255 * rangeProgress).roundToInt())
+            ColorRange.CyanToBlue -> Triple(0, (255 * (1 - rangeProgress)).roundToInt(), 255)
+            ColorRange.BlueToPurple -> Triple((255 * rangeProgress).roundToInt(), 0, 255)
+            ColorRange.PurpleToRed -> Triple(255, 0, (255 * (1 - rangeProgress)).roundToInt())
+        }
+    }
 
-        return Offset(
-            x = colorPickerSize.width * xProgress,
-            y = colorPickerSize.height * yProgress
+    fun hsvToColor(hue: Float, saturation: Float, value: Float, alpha: Float = 1f): Color {
+        val (r, g, b) = hueToRgb(hue / 360.0)
+        return Color(
+            r.lighten(1f - saturation).darken(1f - value),
+            g.lighten(1f - saturation).darken(1f - value),
+            b.lighten(1f - saturation).darken(1f - value),
+            (255 * alpha).roundToInt()
         )
     }
 
-    private fun calculateLightness(initialColor: Color, rangeColor: Color): Float {
-        val initialLuminance = (initialColor.red + initialColor.green + initialColor.blue) / 3
-        val rangeLuminance = (rangeColor.red + rangeColor.green + rangeColor.blue) / 3
-
-        return initialLuminance / rangeLuminance
+    /**
+     * The classic picker's forward formula: the color at the given picker progress values,
+     * where xProgress is the lighten amount (left edge = 1) and yProgress the darken
+     * amount (top edge = 0).
+     */
+    fun classicColorAt(rangeColor: Color, xProgress: Float, yProgress: Float, alpha: Float): Color {
+        return Color(
+            rangeColor.red().lighten(xProgress).darken(yProgress),
+            rangeColor.green().lighten(xProgress).darken(yProgress),
+            rangeColor.blue().lighten(xProgress).darken(yProgress),
+            (255 * alpha).roundToInt()
+        )
     }
 
-    private fun calculateDarkness(initialColor: Color): Float {
-        return 1f - initialColor.alpha
-    }
-
-    fun Color.lightness(): Float {
-        return (red + green + blue) / 3f
-    }
-
-    fun Color.darkness(): Float {
-        return 1f - lightness()
-    }
-
-    fun calculateInitialProgress(initialColor: Color, colors: List<Color>): Float {
-        if (colors.isEmpty() || colors.size == 1) return 0f
-
-        var bestMatchIndex = 0
-        var minDistance = Float.MAX_VALUE
-        for (i in 0 until colors.size - 1) {
-            val distance = colorDistance(initialColor, colors[i])
-            if (distance < minDistance) {
-                minDistance = distance
-                bestMatchIndex = i
-            }
-        }
-
-        val startColor = colors[bestMatchIndex]
-        val endColor = colors[bestMatchIndex + 1]
-        val rangeDistance = colorDistance(startColor, endColor)
-        val progressWithinRange =
-            (colorDistance(startColor, initialColor) / rangeDistance).coerceIn(0f, 1f)
-
-        return (bestMatchIndex + progressWithinRange) / (colors.size - 1)
-    }
-
-    private fun colorDistance(color1: Color, color2: Color): Float {
-        return sqrt(
-            (color1.red - color2.red).pow(2) +
-                    (color1.green - color2.green).pow(2) +
-                    (color1.blue - color2.blue).pow(2)
+    /**
+     * Inverse of [classicColorAt] for the picker area. The max channel is scaled by V and
+     * the min channel is raised by the lighten amount, so x = width * S and y = height * (1 - V).
+     */
+    fun calculateInitialPickerLocation(initialColor: Color, size: IntSize): Offset {
+        val hsv = initialColor.toHsv()
+        return Offset(
+            x = size.width * hsv.saturation,
+            y = size.height * (1f - hsv.value)
         )
     }
 }
