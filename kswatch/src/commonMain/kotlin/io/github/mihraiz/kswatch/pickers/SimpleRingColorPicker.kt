@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.github.mihraiz.kswatch.data.ColorRange
-import io.github.mihraiz.kswatch.ext.colorToHSV
+import io.github.mihraiz.kswatch.ext.toHsv
 import io.github.mihraiz.kswatch.ext.darken
 import io.github.mihraiz.kswatch.helper.ColorPickerHelper
 import io.github.mihraiz.kswatch.helper.MathHelper
@@ -60,9 +60,9 @@ internal fun SimpleRingColorPicker(
     }
 
     LaunchedEffect(initialColor) {
-        val hsv = colorToHSV(initialColor)
-        val hueProgress = hsv[0] / 360f
-        val brightnessProgress = 1 - hsv[2]
+        val hsv = initialColor.toHsv()
+        val hueProgress = hsv.hue / 360f
+        val brightnessProgress = 1 - hsv.value
 
         pickerLocation = IntOffset(
             (hueProgress * sectorsCount).roundToInt(),

@@ -2,7 +2,7 @@ package io.github.mihraiz.kswatch.ext
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import kotlin.math.roundToInt
+import io.github.mihraiz.kswatch.data.Hsv
 
 /**
  * Returns an integer array for all color channels value.
@@ -64,10 +64,13 @@ fun Color.toHex(hexPrefix: Boolean = false, includeAlpha: Boolean = true): Strin
     }
 }
 
-fun colorToHSV(color: Color): FloatArray {
-    val r = color.red
-    val g = color.green
-    val b = color.blue
+/**
+ * Returns the color in the HSV model, see [Hsv].
+ */
+fun Color.toHsv(): Hsv {
+    val r = red
+    val g = green
+    val b = blue
 
     val max = maxOf(r, g, b)
     val min = minOf(r, g, b)
@@ -80,11 +83,11 @@ fun colorToHSV(color: Color): FloatArray {
         else -> ((r - g) / delta) + 4
     } * 60
 
-    val hue = if (h < 0) h + 360 else h
-    val saturation = if (max == 0f) 0f else delta / max
-    val brightness = max
-
-    return floatArrayOf(hue, saturation, brightness)
+    return Hsv(
+        hue = if (h < 0) h + 360 else h,
+        saturation = if (max == 0f) 0f else delta / max,
+        value = max,
+    )
 }
 
 private fun Int.toHex(): String {
@@ -95,29 +98,4 @@ private fun Int.toHex(): String {
             it
         }
     }
-}
-
-internal fun Double.lighten(lightness: Float): Double {
-    return (this + (255 - this) * lightness).coerceIn(0.0, 255.0)
-}
-
-internal fun Float.lighten(lightness: Float): Float {
-    return this + (255 - this) * lightness
-}
-
-internal fun Int.lighten(lightness: Float): Int {
-    val newValue = (this + (255 - this) * lightness).coerceIn(0f, 255f)
-    return newValue.roundToInt()
-}
-
-internal fun Double.darken(darkness: Float): Double {
-    return this - this * darkness
-}
-
-internal fun Float.darken(darkness: Float): Float {
-    return this - this * darkness
-}
-
-internal fun Int.darken(darkness: Float): Int {
-    return (this - this * darkness).roundToInt()
 }

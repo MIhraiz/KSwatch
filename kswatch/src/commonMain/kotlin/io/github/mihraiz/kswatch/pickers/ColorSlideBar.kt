@@ -23,14 +23,13 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.github.mihraiz.kswatch.ext.drawTransparentBackground
-import io.github.mihraiz.kswatch.helper.ColorPickerHelper.calculateInitialProgress
 
 private const val thumbRadius = 20f
 
 @ExperimentalComposeUiApi
 @Composable
 internal fun ColorSlideBar(colors: List<Color>, initialColor: Color, onProgress: (Float) -> Unit) {
-    var progress by remember { mutableStateOf(calculateInitialProgress(initialColor, colors)) }
+    var progress by remember { mutableStateOf(0f) }
     var slideBarSize by remember {
         mutableStateOf(IntSize.Zero)
     }

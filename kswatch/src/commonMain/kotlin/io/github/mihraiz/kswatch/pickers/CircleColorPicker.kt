@@ -22,14 +22,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RadialGradientShader
 import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import io.github.mihraiz.kswatch.data.ColorRange
 import io.github.mihraiz.kswatch.data.Colors.gradientColors
 import io.github.mihraiz.kswatch.ext.blue
-import io.github.mihraiz.kswatch.ext.colorToHSV
+import io.github.mihraiz.kswatch.ext.toHsv
 import io.github.mihraiz.kswatch.ext.darken
 import io.github.mihraiz.kswatch.ext.drawColorSelector
 import io.github.mihraiz.kswatch.ext.green
@@ -69,10 +68,10 @@ internal fun CircleColorPicker(
 
 
     LaunchedEffect(initialColor) {
-            val hsv = colorToHSV(initialColor)
-            val angle = MathHelper.toRadians(hsv[0].toDouble())
-            val saturation = hsv[1]
-            brightness = hsv[2]
+            val hsv = initialColor.toHsv()
+            val angle = MathHelper.toRadians(hsv.hue.toDouble())
+            val saturation = hsv.saturation
+            brightness = hsv.value
 
             val x = radius + cos(angle) * saturation * radius
             val y = radius + sin(angle) * saturation * radius

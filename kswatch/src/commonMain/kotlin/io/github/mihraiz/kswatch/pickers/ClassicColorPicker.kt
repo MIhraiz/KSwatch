@@ -64,11 +64,7 @@ internal fun ClassicColorPicker(
     }
     LaunchedEffect(colorPickerSize, initialColor) {
         if (colorPickerSize.width > 1 && colorPickerSize.height > 1) {
-            pickerLocation = calculateInitialPickerLocation(
-                initialColor,
-                colorPickerSize,
-                rangeColor
-            )
+            pickerLocation = calculateInitialPickerLocation(initialColor, colorPickerSize)
         }
     }
     LaunchedEffect(rangeColor, pickerLocation, colorPickerSize, alpha) {
